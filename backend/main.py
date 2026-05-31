@@ -1,6 +1,6 @@
 import os
 import calendar
-from datetime import date
+import datetime
 from typing import Literal
 from uuid import UUID
 from fastapi import FastAPI, HTTPException, Query, status
@@ -49,7 +49,7 @@ class CustomerCreate(BaseModel):
 
 class AttendanceRecord(BaseModel):
     customer_id: UUID = Field(..., description="UUID of the customer")
-    date: date = Field(..., description="Date of attendance in YYYY-MM-DD format")
+    date: datetime.date = Field(..., description="Date of attendance in YYYY-MM-DD format")
     meal_type: Literal['Lunch', 'Dinner'] = Field(..., description="Meal type: 'Lunch' or 'Dinner'")
     status: Literal['Delivered', 'Canceled', 'Extra'] = Field(..., description="Delivery status of the meal")
 
@@ -73,7 +73,7 @@ def get_daily_count(date: str = Query(..., description="Target date in YYYY-MM-D
     """
     try:
         # Validate date format
-        target_date = date.fromisoformat(date)
+        target_date = datetime.date.fromisoformat(date)
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
