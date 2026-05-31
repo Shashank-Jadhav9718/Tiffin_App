@@ -1,0 +1,20 @@
+# Secrets and Environment configs
+backend/.env
+frontend/.env
+.env
+.env.local
+
+# Python artifacts
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Node dependencies and build artifacts
+node_modules/
+frontend/dist/
+dist/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
