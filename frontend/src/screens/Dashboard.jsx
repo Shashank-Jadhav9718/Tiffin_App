@@ -1,11 +1,17 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Settings, Check, X, Plus, AlertCircle, RefreshCw } from 'lucide-react';
-import { getDailyCount, getCustomers, postAttendance } from '../api';
+import { getDailyCount, getCustomers, postAttendance, calculateBilling } from '../api';
 
 export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
   const [customers, setCustomers] = useState([]);
   const [breakdown, setBreakdown] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Split Card Detail Modal States
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [customerBillInfo, setCustomerBillInfo] = useState(null);
+  const [billingLoading, setBillingLoading] = useState(false);
 
   // Get today's formatted date string (YYYY-MM-DD)
   const todayStr = useMemo(() => {
@@ -166,6 +172,48 @@ export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
     }
   };
 
+  // Click handler for card left-side click (launches details Bottom Sheet)
+  const handleCardClick = async (customer) => {
+    setSelectedCustomer(customer);
+    setIsDetailOpen(true);
+    setBillingLoading(true);
+    try {
+      const today = new Date();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      
+      // Calculate/fetch fresh monthly bills from backend
+      const billingData = await calculateBilling(month, year);
+      const bill = billingData.find(b => b.customer_id === customer.id);
+      
+      if (bill) {
+        const perMealRate = parseFloat(customer.per_meal_rate) || 1.0;
+        const mealCount = perMealRate > 0 ? Math.round(bill.total_amount / perMealRate) : 0;
+        setCustomerBillInfo({
+          total_amount: bill.total_amount,
+          meal_count: mealCount,
+          status: bill.status
+        });
+      } else {
+        setCustomerBillInfo({
+          total_amount: 0.0,
+          meal_count: 0,
+          status: 'Unpaid'
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      showToast('Failed to load customer billing data.', 'error');
+      setCustomerBillInfo({
+        total_amount: 0.0,
+        meal_count: 0,
+        status: 'Unpaid'
+      });
+    } finally {
+      setBillingLoading(false);
+    }
+  };
+
   // Build the list of active daily meal rows to show
   const activeMealRows = useMemo(() => {
     const rows = [];
@@ -280,11 +328,15 @@ export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
               return (
                 <div
                   key={`${customer.id}-${mealType}`}
-                  className="bg-white border border-slate-100 rounded-2xl p-4 flex justify-between items-center shadow-sm transition hover:shadow-md"
+                  className="bg-white border border-slate-100 rounded-2xl flex justify-between items-center shadow-sm transition hover:shadow-md overflow-hidden"
                 >
-                  <div className="space-y-1">
+                  {/* Left Side: Clickable Card Body Container (Tap target minimum 48px) */}
+                  <button
+                    onClick={() => handleCardClick(customer)}
+                    className="flex-1 text-left p-4 focus:outline-none hover:bg-slate-50/50 transition active:bg-slate-50 duration-150"
+                  >
                     <h3 className="font-bold text-slate-800 text-sm tracking-tight">{customer.name}</h3>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 mt-1">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         mealType === 'Lunch' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-800'
                       }`}>
@@ -294,22 +346,126 @@ export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
                         {customer.phone || 'No phone'}
                       </span>
                     </div>
-                  </div>
-
-                  {/* Status Toggle Button (Large, thumb-friendly tap target) */}
-                  <button
-                    onClick={() => handleToggleStatus(customer, mealType, status)}
-                    className={`tap-target flex items-center justify-between space-x-2 border px-4 py-2 rounded-xl text-xs font-bold transition duration-200 ${statusColor}`}
-                  >
-                    <StatusIcon size={14} className="stroke-[3]" />
-                    <span>{statusText}</span>
                   </button>
+
+                  {/* Right Side: Attendance Toggle with stopPropagation */}
+                  <div className="p-4 pr-4 pl-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card details popup
+                        handleToggleStatus(customer, mealType, status);
+                      }}
+                      className={`tap-target flex items-center justify-between space-x-2 border px-4 py-2 rounded-xl text-xs font-bold transition duration-200 ${statusColor}`}
+                    >
+                      <StatusIcon size={14} className="stroke-[3]" />
+                      <span>{statusText}</span>
+                    </button>
+                  </div>
                 </div>
               );
             })}
           </div>
         )}
       </div>
+
+      {/* Premium Swipe-up Bottom Sheet Modal Detail View */}
+      {isDetailOpen && selectedCustomer && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-end z-50 transition-opacity">
+          {/* Translucent backdrop click overlay closes sheet */}
+          <div className="absolute inset-0" onClick={() => setIsDetailOpen(false)}></div>
+          
+          {/* Bottom Sheet Box */}
+          <div className="bg-white w-full max-w-lg rounded-t-3xl shadow-2xl p-6 space-y-6 animate-slide-up max-h-[85vh] overflow-y-auto relative z-10">
+            
+            {/* Top Grab Indicator Swipe-Down Graphic */}
+            <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto -mt-2 mb-4"></div>
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <h2 className="text-xl font-bold text-slate-800 tracking-tight">{selectedCustomer.name}</h2>
+                <p className="text-sm font-semibold text-slate-500 flex items-center">
+                  <span className="text-emerald-500 mr-1.5 text-base">📞</span> {selectedCustomer.phone || 'No phone number'}
+                </p>
+                <span className="inline-block text-xs font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 mt-1">
+                  🍱 Plan: {selectedCustomer.plan_type}
+                </span>
+              </div>
+              
+              <button
+                onClick={() => setIsDetailOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 tap-target"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Current Month Billing calculations */}
+            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Current Month's Overview</h3>
+              
+              {billingLoading ? (
+                <div className="flex flex-col items-center justify-center py-6 space-y-2">
+                  <div className="w-6 h-6 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin"></div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Calculating...</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Total meals card */}
+                  <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Meals</p>
+                    <p className="text-xl font-extrabold text-slate-800 mt-1">
+                      {customerBillInfo?.meal_count || 0} <span className="text-xs font-semibold text-slate-400">Meals</span>
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-medium mt-1">₹{selectedCustomer.per_meal_rate}/meal rate</p>
+                  </div>
+
+                  {/* Due amount card */}
+                  <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Amount Due</p>
+                    <p className="text-xl font-extrabold text-emerald-600 mt-1">
+                      ₹{(customerBillInfo?.total_amount || 0).toLocaleString('en-IN')}
+                    </p>
+                    <span className={`inline-block text-[9px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full uppercase mt-1.5 border ${
+                      customerBillInfo?.status === 'Paid'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                        : 'bg-rose-50 text-rose-700 border-rose-100'
+                    }`}>
+                      {customerBillInfo?.status || 'Unpaid'}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* WhatsApp CTA Anchor */}
+            <div className="pt-2">
+              {selectedCustomer.phone ? (
+                <a
+                  href={`https://wa.me/${selectedCustomer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                    `Namaste ${selectedCustomer.name} ji 🙏, aapka is mahine ka tiffin bill ₹${(customerBillInfo?.total_amount || 0).toLocaleString('en-IN')} hai (${customerBillInfo?.meal_count || 0} meals). Please UPI se pay kar dijiye. Shukriya! 🍱`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3.5 rounded-xl transition tap-target shadow-md flex items-center justify-center space-x-2 text-sm active:scale-[0.98]"
+                >
+                  <span className="text-lg">💬</span>
+                  <span>Send Payment Reminder (WhatsApp)</span>
+                </a>
+              ) : (
+                <button
+                  disabled
+                  className="w-full bg-slate-100 text-slate-400 font-bold py-3.5 rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 text-sm opacity-60"
+                >
+                  <span>💬</span>
+                  <span>No Phone Number Available</span>
+                </button>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
