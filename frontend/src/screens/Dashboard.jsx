@@ -251,114 +251,112 @@ export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4 bg-white border-b border-slate-100 sticky top-0 z-10 shadow-sm">
+      <header className="flex justify-between items-center px-6 py-4 border-b-2 border-[#0f172a] sticky top-0 z-10 bg-[#fdfbf7]">
         <div>
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">Today's Attendance</h1>
-          <p className="text-sm font-medium text-slate-500">{formattedDisplayDate}</p>
+          <h1 className="text-xl font-bold text-[#0f172a] tracking-tight border-b-2 border-[#0f172a] inline-block mb-1">Today's Khata</h1>
+          <p className="text-sm font-bold font-hand text-slate-600">{formattedDisplayDate}</p>
         </div>
         <button
           onClick={onOpenSettings}
-          className="tap-target flex items-center justify-center rounded-full bg-slate-50 hover:bg-slate-100 text-slate-600 transition"
+          className="drawn-btn w-10 h-10 flex items-center justify-center rounded-none"
           aria-label="Settings"
         >
-          <Settings size={22} className="stroke-[2]" />
+          <Settings size={22} className="stroke-[2] text-[#0f172a]" />
         </button>
       </header>
 
       {/* Scrollable Content Container */}
       <div className="flex-1 overflow-y-auto px-4 pb-24 pt-4 space-y-5">
         
-        {/* Emerald Summary Card */}
-        <div className="bg-emerald-500 text-white rounded-2xl p-5 shadow-premium flex flex-col md:flex-row justify-between items-center transition-card hover:shadow-premium-hover">
-          <div className="flex items-center space-x-3 mb-2 md:mb-0">
-            <span className="text-2xl">🍱</span>
+        {/* Flat Summary Box */}
+        <div className="border-2 border-[#0f172a] p-4 shadow-[4px_4px_0px_#0f172a] flex flex-col md:flex-row justify-between items-center bg-white">
+          <div className="flex items-center space-x-3 mb-3 md:mb-0">
+            <span className="text-2xl border-2 border-[#0f172a] p-1">🍱</span>
             <div className="text-center md:text-left">
-              <p className="text-xs uppercase tracking-wider font-semibold text-emerald-100">Live Delivery Count</p>
-              <h2 className="text-lg font-bold">Today's Active Boxes</h2>
+              <p className="text-xs uppercase font-bold text-slate-500 font-hand">Delivery Count</p>
+              <h2 className="text-lg font-bold">Active Boxes</h2>
             </div>
           </div>
-          <div className="flex items-center space-x-4 bg-emerald-600/30 px-4 py-2 rounded-xl border border-emerald-400/20 font-bold text-sm tracking-wide">
-            <span className="flex items-center">☀️ Lunch: <strong className="ml-1 text-emerald-50">{stats.lunch}</strong></span>
-            <span className="text-emerald-300">|</span>
-            <span className="flex items-center">🌙 Dinner: <strong className="ml-1 text-emerald-50">{stats.dinner}</strong></span>
+          <div className="flex items-center space-x-4 border-2 border-[#0f172a] px-4 py-2 font-bold text-sm bg-[#fdfbf7] font-hand">
+            <span className="flex items-center">☀️ L: <strong className="ml-1">{stats.lunch}</strong></span>
+            <span className="text-[#0f172a]">|</span>
+            <span className="flex items-center">🌙 D: <strong className="ml-1">{stats.dinner}</strong></span>
           </div>
         </div>
 
         {/* Refresh button */}
-        <div className="flex justify-between items-center px-1">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            Meal List ({activeMealRows.length})
+        <div className="flex justify-between items-center px-1 border-b-2 border-[#0f172a] pb-1">
+          <span className="text-xs font-bold uppercase text-[#0f172a] font-hand">
+            List ({activeMealRows.length})
           </span>
           <button
             onClick={() => loadDashboardData(false)}
-            className="text-xs font-semibold text-emerald-600 flex items-center space-x-1 hover:text-emerald-700 active:scale-95 transition py-1 px-2 rounded-md hover:bg-emerald-50"
+            className="text-xs font-bold text-[#0f172a] flex items-center space-x-1 border border-[#0f172a] px-2 py-1 active:bg-slate-200"
           >
             <RefreshCw size={12} className={isLoading ? "animate-spin" : ""} />
-            <span>Reload</span>
+            <span className="font-hand">Reload</span>
           </button>
         </div>
 
         {/* Scrollable Customer List */}
         {activeMealRows.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 bg-white rounded-2xl shadow-premium border border-slate-100 text-center">
+          <div className="flex flex-col items-center justify-center py-16 px-4 border-2 border-[#0f172a] bg-white text-center shadow-[4px_4px_0px_#0f172a]">
             <span className="text-4xl mb-3">🍱</span>
-            <h3 className="text-base font-bold text-slate-800">No Meals Seeding Today</h3>
-            <p className="text-xs text-slate-500 max-w-[240px] mt-1">
-              Add active customers in the Customers tab to start tracking deliveries.
+            <h3 className="text-base font-bold text-[#0f172a] border-b-2 border-[#0f172a]">No Meals Today</h3>
+            <p className="text-xs text-[#0f172a] max-w-[240px] mt-2 font-hand">
+              Add customers in the Khata tab.
             </p>
           </div>
         ) : (
-          <div className="grid gap-3">
+          <div className="grid gap-0">
             {activeMealRows.map(({ customer, mealType, status, planLabel }) => {
               // Status Styling Variables
               let statusText = "Delivered";
-              let statusColor = "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100";
-              let StatusIcon = Check;
+              let statusBoxClass = "border-[#0f172a]";
+              let IconStr = "✅";
 
               if (status === 'Canceled') {
                 statusText = "Canceled";
-                statusColor = "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100";
-                StatusIcon = X;
+                statusBoxClass = "border-[#ef4444]";
+                IconStr = "❌";
               } else if (status === 'Extra') {
-                statusText = "Extra Meal";
-                statusColor = "bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100";
-                StatusIcon = Plus;
+                statusText = "Extra";
+                statusBoxClass = "border-[#0f172a]";
+                IconStr = "➕";
               }
 
               return (
                 <div
                   key={`${customer.id}-${mealType}`}
-                  className="bg-white border border-slate-100 rounded-2xl flex justify-between items-center shadow-sm transition hover:shadow-md overflow-hidden"
+                  className="ruled-row flex justify-between items-center transition hover:bg-[#bae6fd]/20"
                 >
-                  {/* Left Side: Clickable Card Body Container (Tap target minimum 48px) */}
+                  {/* Left Side: Clickable */}
                   <button
                     onClick={() => handleCardClick(customer)}
-                    className="flex-1 text-left p-4 focus:outline-none hover:bg-slate-50/50 transition active:bg-slate-50 duration-150"
+                    className="flex-1 text-left py-3 focus:outline-none"
                   >
-                    <h3 className="font-bold text-slate-800 text-sm tracking-tight">{customer.name}</h3>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        mealType === 'Lunch' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-800'
-                      }`}>
-                        {mealType === 'Lunch' ? '☀️ Lunch' : '🌙 Dinner'}
+                    <h3 className="font-bold text-[#0f172a] text-sm tracking-tight leading-tight">{customer.name}</h3>
+                    <div className="flex items-center space-x-2 mt-0.5">
+                      <span className="text-[10px] font-bold font-hand border border-[#0f172a] px-1">
+                        {mealType === 'Lunch' ? 'L' : 'D'}
                       </span>
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] font-hand">
                         {customer.phone || 'No phone'}
                       </span>
                     </div>
                   </button>
 
-                  {/* Right Side: Attendance Toggle with stopPropagation */}
-                  <div className="p-4 pr-4 pl-0">
+                  {/* Right Side: Toggle */}
+                  <div className="py-2 pr-2 pl-0">
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent card details popup
+                        e.stopPropagation();
                         handleToggleStatus(customer, mealType, status);
                       }}
-                      className={`tap-target flex items-center justify-between space-x-2 border px-4 py-2 rounded-xl text-xs font-bold transition duration-200 ${statusColor}`}
+                      className={`tap-target flex flex-col items-center justify-center border-2 w-16 py-1 bg-white font-hand font-bold text-xs ${statusBoxClass} active:bg-slate-200 transition-colors shadow-[2px_2px_0px_#0f172a]`}
                     >
-                      <StatusIcon size={14} className="stroke-[3]" />
-                      <span>{statusText}</span>
+                      <span className="text-base leading-none mb-0.5">{IconStr}</span>
+                      <span className="text-[9px] uppercase">{statusText}</span>
                     </button>
                   </div>
                 </div>
@@ -368,68 +366,60 @@ export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
         )}
       </div>
 
-      {/* Premium Swipe-up Bottom Sheet Modal Detail View */}
+      {/* Flat Bottom Sheet Modal Detail View */}
       {isDetailOpen && selectedCustomer && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-end z-50 transition-opacity">
-          {/* Translucent backdrop click overlay closes sheet */}
+        <div className="fixed inset-0 bg-[#0f172a]/80 flex justify-center items-end z-50">
           <div className="absolute inset-0" onClick={() => setIsDetailOpen(false)}></div>
           
-          {/* Bottom Sheet Box */}
-          <div className="bg-white w-full max-w-lg rounded-t-3xl shadow-2xl p-6 space-y-6 animate-slide-up max-h-[85vh] overflow-y-auto relative z-10">
+          <div className="bg-[#fdfbf7] w-full max-w-lg border-t-4 border-[#0f172a] p-6 space-y-6 max-h-[85vh] overflow-y-auto relative z-10">
             
-            {/* Top Grab Indicator Swipe-Down Graphic */}
-            <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto -mt-2 mb-4"></div>
+            <div className="w-12 h-1 bg-[#0f172a] mx-auto -mt-2 mb-4"></div>
             
-            {/* Modal Header */}
-            <div className="flex justify-between items-start">
+            <div className="flex justify-between items-start border-b-2 border-[#0f172a] pb-2">
               <div className="space-y-1">
-                <h2 className="text-xl font-bold text-slate-800 tracking-tight">{selectedCustomer.name}</h2>
-                <p className="text-sm font-semibold text-slate-500 flex items-center">
-                  <span className="text-emerald-500 mr-1.5 text-base">📞</span> {selectedCustomer.phone || 'No phone number'}
+                <h2 className="text-xl font-bold text-[#0f172a] tracking-tight">{selectedCustomer.name}</h2>
+                <p className="text-sm font-bold font-hand text-slate-600 flex items-center">
+                  📞 {selectedCustomer.phone || 'No phone number'}
                 </p>
-                <span className="inline-block text-xs font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 mt-1">
-                  🍱 Plan: {selectedCustomer.plan_type}
+                <span className="inline-block text-xs font-bold border border-[#0f172a] px-2 mt-1 font-hand">
+                  Plan: {selectedCustomer.plan_type}
                 </span>
               </div>
               
               <button
                 onClick={() => setIsDetailOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 tap-target"
+                className="w-8 h-8 flex items-center justify-center text-[#0f172a] border-2 border-[#0f172a] tap-target bg-white shadow-[2px_2px_0px_#0f172a]"
               >
-                <X size={18} />
+                <X size={18} strokeWidth={3} />
               </button>
             </div>
 
-            {/* Current Month Billing calculations */}
-            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Current Month's Overview</h3>
+            <div className="border-2 border-[#0f172a] bg-white p-5 space-y-4 shadow-[4px_4px_0px_#0f172a]">
+              <h3 className="text-xs font-bold uppercase border-b border-[#bae6fd] pb-1 font-sans">Month Overview</h3>
               
               {billingLoading ? (
-                <div className="flex flex-col items-center justify-center py-6 space-y-2">
-                  <div className="w-6 h-6 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin"></div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Calculating...</span>
+                <div className="flex flex-col items-center justify-center py-6 font-hand font-bold">
+                  Calculating...
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Total meals card */}
-                  <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Meals</p>
-                    <p className="text-xl font-extrabold text-slate-800 mt-1">
-                      {customerBillInfo?.meal_count || 0} <span className="text-xs font-semibold text-slate-400">Meals</span>
+                  <div className="border border-[#0f172a] p-3">
+                    <p className="text-[10px] font-bold uppercase font-sans">Total Meals</p>
+                    <p className="text-xl font-extrabold font-hand mt-1">
+                      {customerBillInfo?.meal_count || 0}
                     </p>
-                    <p className="text-[10px] text-slate-400 font-medium mt-1">₹{selectedCustomer.per_meal_rate}/meal rate</p>
+                    <p className="text-[10px] font-bold font-hand border-t border-[#bae6fd] mt-1 pt-1">₹{selectedCustomer.per_meal_rate}/meal</p>
                   </div>
 
-                  {/* Due amount card */}
-                  <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Amount Due</p>
-                    <p className="text-xl font-extrabold text-emerald-600 mt-1">
+                  <div className="border border-[#0f172a] p-3">
+                    <p className="text-[10px] font-bold uppercase font-sans">Amount Due</p>
+                    <p className="text-xl font-extrabold font-hand mt-1">
                       ₹{(customerBillInfo?.total_amount || 0).toLocaleString('en-IN')}
                     </p>
-                    <span className={`inline-block text-[9px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full uppercase mt-1.5 border ${
+                    <span className={`inline-block text-[9px] font-bold uppercase border mt-1 px-1 font-hand ${
                       customerBillInfo?.status === 'Paid'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                        : 'bg-rose-50 text-rose-700 border-rose-100'
+                        ? 'border-[#0f172a] bg-[#bae6fd]'
+                        : 'border-[#ef4444]'
                     }`}>
                       {customerBillInfo?.status || 'Unpaid'}
                     </span>
@@ -438,7 +428,6 @@ export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
               )}
             </div>
 
-            {/* WhatsApp CTA Anchor */}
             <div className="pt-2">
               {selectedCustomer.phone ? (
                 <a
@@ -447,18 +436,16 @@ export default function Dashboard({ onOpenSettings, showToast, showLoading }) {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3.5 rounded-xl transition tap-target shadow-md flex items-center justify-center space-x-2 text-sm active:scale-[0.98]"
+                  className="drawn-btn w-full bg-white font-bold py-3 text-center block text-sm"
                 >
-                  <span className="text-lg">💬</span>
-                  <span>Send Payment Reminder (WhatsApp)</span>
+                  [💬] WhatsApp Reminder
                 </a>
               ) : (
                 <button
                   disabled
-                  className="w-full bg-slate-100 text-slate-400 font-bold py-3.5 rounded-xl cursor-not-allowed flex items-center justify-center space-x-2 text-sm opacity-60"
+                  className="w-full border-2 border-slate-300 text-slate-400 font-bold font-hand py-3 cursor-not-allowed text-sm bg-slate-100"
                 >
-                  <span>💬</span>
-                  <span>No Phone Number Available</span>
+                  [💬] No Phone Number
                 </button>
               )}
             </div>

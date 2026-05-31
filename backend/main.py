@@ -405,3 +405,34 @@ def deactivate_customer(customer_id: UUID):
             detail=f"Database error: {str(e)}"
         )
 
+
+@app.get("/api/v1/customers/{customer_id}/logs")
+def get_customer_logs(
+    customer_id: UUID,
+    month: int = Query(..., ge=1, le=12, description="Month number (1-12)"),
+    year: int = Query(..., ge=2000, description="Billing Year")
+):
+    """
+    Retrieve all daily logs for a specific customer during the specified month and year.
+    """
+    try:
+        _, last_day = calendar.monthrange(year, month)
+        start_date = f"{year:04d}-{month:02d}-01"
+        end_date = f"{year:04d}-{month:02d}-{last_day:02d}"
+
+        response = supabase.table('daily_logs') \
+            .select('*') \
+            .eq('customer_id', str(customer_id)) \
+            .gte('date', start_date) \
+            .lte('date', end_date) \
+            .execute()
+
+        return response.data or []
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error: {str(e)}"
+        )
+
+

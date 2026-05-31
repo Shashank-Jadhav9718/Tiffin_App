@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Users, Receipt, Shield, Lock, Trash2, KeyRound, Check, RefreshCw, X, ShieldAlert } from 'lucide-react';
+import { Home, Users, Receipt, Shield, Lock, Trash2, KeyRound, Check, RefreshCw, X, ShieldAlert, Book } from 'lucide-react';
 import Dashboard from './screens/Dashboard';
 import Customers from './screens/Customers';
 import Billing from './screens/Billing';
+import MonthlyLedger from './components/MonthlyLedger';
 
 export default function App() {
   // Navigation State
@@ -88,15 +89,15 @@ export default function App() {
   // Render auth screen if not logged in
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 bg-slate-900 text-white flex flex-col justify-between p-6 z-[9999] overflow-hidden select-none">
+      <div className="fixed inset-0 bg-[#fdfbf7] text-[#0f172a] flex flex-col justify-between p-6 z-[9999] overflow-hidden select-none font-sans">
         
         {/* Auth Header */}
         <div className="flex flex-col items-center mt-12 space-y-3">
-          <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg border border-emerald-400/20">
-            <Lock size={30} className="text-white" />
+          <div className="w-16 h-16 border-2 border-[#0f172a] flex items-center justify-center">
+            <Lock size={30} className="text-[#0f172a]" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight">Tiffin Manager PWA</h1>
-          <p className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Security Lockscreen</p>
+          <h1 className="text-xl font-bold tracking-tight border-b-2 border-[#0f172a] pb-1">Tiffin Bahi Khata</h1>
+          <p className="text-xs font-bold tracking-wider uppercase font-hand">Security Lock</p>
         </div>
 
         {/* PIN Indicators */}
@@ -105,28 +106,22 @@ export default function App() {
             {[0, 1, 2, 3].map((idx) => (
               <div
                 key={idx}
-                className={`w-4 h-4 rounded-full transition-all duration-150 border-2 ${
-                  pin.length > idx
-                    ? 'bg-emerald-500 border-emerald-500 scale-110 shadow-emerald-500/30'
-                    : 'border-slate-600 bg-transparent'
+                className={`w-4 h-4 border-2 border-[#0f172a] ${
+                  pin.length > idx ? 'bg-[#0f172a]' : 'bg-transparent'
                 }`}
               />
             ))}
           </div>
-          <p className="text-xs text-slate-400 font-medium">Enter 4-digit code (Default: 1234)</p>
+          <p className="text-xs font-bold font-hand">Enter 4-digit code (1234)</p>
         </div>
 
-        {/* Numeric Keypad (Circular, thumb-friendly tap targets) */}
+        {/* Numeric Keypad */}
         <div className="w-full max-w-xs mx-auto mb-10 grid grid-cols-3 gap-4 justify-items-center">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0'].map((key) => (
             <button
               key={key}
               onClick={() => handleKeypadPress(key)}
-              className={`tap-target w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold transition active:scale-95 duration-100 ${
-                key === 'C'
-                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                  : 'bg-slate-800 text-slate-100 hover:bg-slate-700 border border-slate-700/50'
-              }`}
+              className="drawn-btn w-16 h-16 flex items-center justify-center text-xl font-bold font-hand"
             >
               {key}
             </button>
@@ -135,13 +130,10 @@ export default function App() {
 
         {/* Global Toast inside Lock Screen */}
         {toast && (
-          <div className={`fixed top-5 left-4 right-4 p-4 rounded-2xl flex items-center space-x-2 text-xs font-bold shadow-lg border animate-slide-up z-50 ${
-            toast.type === 'success' 
-              ? 'bg-emerald-500 text-white border-emerald-400' 
-              : 'bg-rose-500 text-white border-rose-400'
+          <div className={`fixed top-5 left-4 right-4 p-4 border-2 border-[#0f172a] font-bold z-50 ${
+            toast.type === 'success' ? 'bg-[#bae6fd]' : 'bg-[#ef4444] text-white'
           }`}>
-            <span>{toast.type === 'success' ? '✓' : '⚠️'}</span>
-            <span>{toast.message}</span>
+            <span className="font-hand">{toast.type === 'success' ? '[✓]' : '[!]'} {toast.message}</span>
           </div>
         )}
       </div>
@@ -149,8 +141,8 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background relative pb-20">
-      
+    <div className="notebook-container flex flex-col min-h-screen relative pb-20">
+      <div className="notebook-margin"></div>
       {/* Dynamic Screen Mounting */}
       <main className="flex-1 w-full max-w-md mx-auto">
         {activeTab === 'dashboard' && (
@@ -172,105 +164,108 @@ export default function App() {
             showLoading={setGlobalLoading}
           />
         )}
+        {activeTab === 'ledger' && (
+          <div className="pt-4 h-screen">
+            <MonthlyLedger />
+          </div>
+        )}
       </main>
 
-      {/* Navigation (Sticky bottom navigation bar with 3 tabs) */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-100 py-2.5 z-40 shadow-lg">
-        <div className="max-w-md mx-auto flex justify-around items-center px-4">
+      {/* Navigation (Sticky bottom navigation bar with 4 tabs) */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#fdfbf7] border-t-2 border-[#0f172a] py-2 z-40">
+        <div className="max-w-md mx-auto flex justify-around items-center px-4 pl-12">
           
           {/* Dashboard Tab */}
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`tap-target flex flex-col items-center space-y-1 transition duration-150 ${
-              activeTab === 'dashboard' ? 'text-emerald-500 font-bold scale-105' : 'text-slate-400'
+            className={`tap-target flex flex-col items-center space-y-1 ${
+              activeTab === 'dashboard' ? 'text-[#0f172a] font-bold' : 'text-slate-400 font-semibold'
             }`}
           >
             <Home size={20} className={activeTab === 'dashboard' ? 'stroke-[2.5]' : 'stroke-[2]'} />
-            <span className="text-[10px] tracking-wide">Dashboard</span>
+            <span className="text-[10px] tracking-wide uppercase">Today</span>
           </button>
 
           {/* Customers Tab */}
           <button
             onClick={() => setActiveTab('customers')}
-            className={`tap-target flex flex-col items-center space-y-1 transition duration-150 ${
-              activeTab === 'customers' ? 'text-emerald-500 font-bold scale-105' : 'text-slate-400'
+            className={`tap-target flex flex-col items-center space-y-1 ${
+              activeTab === 'customers' ? 'text-[#0f172a] font-bold' : 'text-slate-400 font-semibold'
             }`}
           >
             <Users size={20} className={activeTab === 'customers' ? 'stroke-[2.5]' : 'stroke-[2]'} />
-            <span className="text-[10px] tracking-wide">Customers</span>
+            <span className="text-[10px] tracking-wide uppercase">Khata</span>
           </button>
 
           {/* Billing Tab */}
           <button
             onClick={() => setActiveTab('billing')}
-            className={`tap-target flex flex-col items-center space-y-1 transition duration-150 ${
-              activeTab === 'billing' ? 'text-emerald-500 font-bold scale-105' : 'text-slate-400'
+            className={`tap-target flex flex-col items-center space-y-1 ${
+              activeTab === 'billing' ? 'text-[#0f172a] font-bold' : 'text-slate-400 font-semibold'
             }`}
           >
             <Receipt size={20} className={activeTab === 'billing' ? 'stroke-[2.5]' : 'stroke-[2]'} />
-            <span className="text-[10px] tracking-wide">Billing</span>
+            <span className="text-[10px] tracking-wide uppercase">Bill</span>
+          </button>
+
+          {/* Ledger Tab */}
+          <button
+            onClick={() => setActiveTab('ledger')}
+            className={`tap-target flex flex-col items-center space-y-1 ${
+              activeTab === 'ledger' ? 'text-[#0f172a] font-bold' : 'text-slate-400 font-semibold'
+            }`}
+          >
+            <Book size={20} className={activeTab === 'ledger' ? 'stroke-[2.5]' : 'stroke-[2]'} />
+            <span className="text-[10px] tracking-wide uppercase">Month</span>
           </button>
 
         </div>
       </nav>
 
-      {/* Global Settings Modal (Status, overlay shell) */}
+      {/* Global Settings Modal */}
       {isSettingsOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 z-50">
-          <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-5 animate-slide-up">
+        <div className="fixed inset-0 bg-[#0f172a]/80 flex justify-center items-center p-4 z-50">
+          <div className="bg-[#fdfbf7] w-full max-w-sm border-2 border-[#0f172a] p-5 space-y-5 shadow-[4px_4px_0px_#0f172a]">
             
             {/* Modal Header */}
-            <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+            <div className="flex justify-between items-center pb-2 border-b-2 border-[#0f172a]">
               <div className="flex items-center space-x-2">
-                <Shield className="text-emerald-500" size={20} />
-                <h3 className="font-bold text-slate-800 text-sm tracking-tight">System Status</h3>
+                <h3 className="font-bold text-[#0f172a] text-lg">System Status</h3>
               </div>
-              <button
-                onClick={() => setIsSettingsOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
-              >
-                <X size={16} />
+              <button onClick={() => setIsSettingsOpen(false)} className="text-[#0f172a]">
+                <X size={24} />
               </button>
             </div>
 
-            {/* Connection Information Summary */}
-            <div className="space-y-4 text-left">
-              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold font-mono">
-                  ✓
-                </div>
+            <div className="space-y-4 font-hand">
+              <div className="p-3 border-2 border-[#0f172a] flex items-center space-x-3 bg-white">
+                <div className="font-bold text-xl">[ OK ]</div>
                 <div>
-                  <p className="text-xs font-extrabold text-emerald-800 uppercase tracking-wide">Connected</p>
-                  <p className="text-[10px] text-emerald-600 font-semibold">FastAPI Backend is Active & Online</p>
+                  <p className="font-bold">Connected</p>
+                  <p className="text-xs">FastAPI Backend Active</p>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">API Gateway Endpoint</label>
-                  <p className="text-xs font-semibold text-slate-700 bg-slate-50 p-2 rounded-lg border border-slate-100 truncate">
-                    http://127.0.0.1:8000
-                  </p>
+              <div className="space-y-3">
+                <div className="ruled-row pb-1">
+                  <label className="text-xs font-bold font-sans">API Endpoint</label>
+                  <p className="text-sm">http://127.0.0.1:8000</p>
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Database Connection</label>
-                  <p className="text-xs font-semibold text-slate-700 bg-slate-50 p-2 rounded-lg border border-slate-100 truncate">
-                    Supabase Transactional Engine
-                  </p>
+                <div className="ruled-row pb-1">
+                  <label className="text-xs font-bold font-sans">Database</label>
+                  <p className="text-sm">Supabase Storage</p>
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Application Version</label>
-                  <p className="text-xs font-bold text-emerald-600 bg-emerald-50/50 px-2 py-1 rounded-md inline-block">
-                    v1.0.0 (Premium PWA)
-                  </p>
+                <div className="ruled-row pb-1">
+                  <label className="text-xs font-bold font-sans">Version</label>
+                  <p className="text-sm">v1.0.0 (Bahi Khata)</p>
                 </div>
               </div>
 
               <button
                 onClick={() => setIsSettingsOpen(false)}
-                className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition tap-target shadow-md active:scale-[0.98]"
+                className="drawn-btn w-full py-3 font-bold text-lg font-sans mt-4"
               >
-                Done
+                Close
               </button>
             </div>
           </div>
@@ -292,13 +287,12 @@ export default function App() {
 
       {/* Global Toast Alert Queue */}
       {toast && (
-        <div className={`fixed top-4 left-4 right-4 p-4 rounded-2xl flex items-center space-x-2 text-xs font-bold shadow-lg border animate-slide-up z-[9999] ${
+        <div className={`fixed top-4 left-10 right-4 p-4 border-2 border-[#0f172a] font-bold z-[9999] shadow-[4px_4px_0px_#0f172a] ${
           toast.type === 'success' 
-            ? 'bg-emerald-500 text-white border-emerald-400' 
-            : 'bg-rose-500 text-white border-rose-400'
+            ? 'bg-[#bae6fd] text-[#0f172a]' 
+            : 'bg-[#ef4444] text-white'
         }`}>
-          <span>{toast.type === 'success' ? '✓' : '⚠️'}</span>
-          <span>{toast.message}</span>
+          <span className="font-hand">{toast.type === 'success' ? '[✓]' : '[!]'} {toast.message}</span>
         </div>
       )}
 

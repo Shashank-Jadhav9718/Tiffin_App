@@ -2,46 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;600;800&display=swap');
+
 @layer base {
   body {
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
+    background-color: #fdfbf7;
+    color: #0f172a;
+    font-family: 'Inter', sans-serif;
   }
 }
 
-/* Custom micro-animations & premium touches */
-.transition-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Notebook UI utility classes */
+.font-hand {
+  font-family: 'Courier Prime', monospace;
 }
 
+.ruled-row {
+  border-bottom: 1px solid #bae6fd;
+}
+
+/* Notebook styling overrides */
+.notebook-container {
+  position: relative;
+  min-height: 100vh;
+  padding-left: 48px; /* space for the red margin */
+}
+
+.notebook-margin {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 40px;
+  width: 4px;
+  border-left: 2px solid #ef4444;
+  border-right: 1px solid rgba(239, 68, 68, 0.5);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.drawn-btn {
+  border: 2px solid #0f172a;
+  border-radius: 2px; /* slight imperfection */
+  background: transparent;
+  color: #0f172a;
+  box-shadow: 2px 2px 0px #0f172a;
+  transition: all 0.1s;
+}
+
+.drawn-btn:active {
+  box-shadow: 0px 0px 0px #0f172a;
+  transform: translate(2px, 2px);
+}
+
+.drawn-box {
+  border: 2px solid #0f172a;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+/* Clean up unused animations from old modern UI */
 .tap-target {
   min-height: 48px;
   min-width: 48px;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Premium gradient loaders */
-.loader-gradient {
-  background: linear-gradient(270deg, #10b981, #34d399, #059669);
-  background-size: 600% 600%;
-  animation: loaderGrad 3s ease infinite;
-}
-
-@keyframes loaderGrad {
-  0% { background-position: 0% 50% }
-  50% { background-position: 100% 50% }
-  100% { background-position: 0% 50% }
 }

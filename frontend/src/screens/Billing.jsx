@@ -109,45 +109,45 @@ export default function Billing({ showToast, showLoading }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header & Controls */}
-      <header className="px-6 py-4 bg-white border-b border-slate-100 sticky top-0 z-10 shadow-sm space-y-4">
-        <h1 className="text-xl font-bold text-slate-800 tracking-tight">Monthly Billing</h1>
+      <header className="px-6 py-4 border-b-2 border-[#0f172a] sticky top-0 z-10 bg-[#fdfbf7] space-y-4">
+        <h1 className="text-xl font-bold text-[#0f172a] tracking-tight border-b-2 border-[#0f172a] inline-block mb-1">Monthly Ledger</h1>
         
-        {/* Month & Year Dropdown Selectors (Thumb Friendly Large Targets) */}
+        {/* Month & Year Dropdown Selectors */}
         <div className="grid grid-cols-2 gap-3">
           <div className="relative">
             <select
               value={month}
               onChange={(e) => setMonth(parseInt(e.target.value))}
-              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition tap-target appearance-none text-slate-700"
+              className="w-full px-3 py-2 bg-white border-2 border-[#0f172a] text-sm font-bold focus:outline-none shadow-[2px_2px_0px_#0f172a] font-hand text-[#0f172a] appearance-none"
             >
               {monthsList.map(m => (
                 <option key={m.value} value={m.value}>{m.name}</option>
               ))}
             </select>
-            <Calendar size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <Calendar size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#0f172a] pointer-events-none" />
           </div>
 
           <div className="relative">
             <select
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition tap-target appearance-none text-slate-700"
+              className="w-full px-3 py-2 bg-white border-2 border-[#0f172a] text-sm font-bold focus:outline-none shadow-[2px_2px_0px_#0f172a] font-hand text-[#0f172a] appearance-none"
             >
               {yearsList.map(y => (
                 <option key={y} value={y}>{y}</option>
               ))}
             </select>
-            <Calendar size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <Calendar size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#0f172a] pointer-events-none" />
           </div>
         </div>
 
         {/* Generate Bills Trigger Button */}
         <button
           onClick={handleGenerateBills}
-          className="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl hover:bg-emerald-600 hover:shadow-emerald-500/10 transition tap-target active:scale-[0.98] shadow-md flex items-center justify-center space-x-2 text-sm"
+          className="drawn-btn w-full bg-[#0f172a] text-white font-bold py-3 shadow-[4px_4px_0px_#0f172a] flex items-center justify-center space-x-2 text-sm font-sans"
         >
           <Receipt size={16} />
-          <span>Generate & Recalculate Bills</span>
+          <span>Calculate Totals</span>
         </button>
       </header>
 
@@ -156,18 +156,18 @@ export default function Billing({ showToast, showLoading }) {
         
         {/* Billing aggregates banner */}
         {bills.length > 0 && (
-          <div className="bg-slate-900 text-white rounded-2xl p-4 shadow-premium flex items-center justify-between transition-card">
+          <div className="border-2 border-[#0f172a] p-4 shadow-[4px_4px_0px_#0f172a] bg-white flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <span className="text-xl">💰</span>
+              <span className="text-xl border-2 border-[#0f172a] p-1 bg-[#fdfbf7]">💰</span>
               <div>
-                <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Total Outstanding Due</p>
-                <h2 className="text-sm font-bold text-slate-200">
-                  {stats.unpaidCount} Pending Customers
+                <p className="text-[10px] uppercase font-bold text-slate-500 font-sans">Total Due</p>
+                <h2 className="text-sm font-bold text-[#0f172a] font-hand mt-0.5">
+                  {stats.unpaidCount} Pending
                 </h2>
               </div>
             </div>
             <div className="text-right">
-              <span className="text-lg font-extrabold text-emerald-400">
+              <span className="text-lg font-extrabold text-[#0f172a] font-hand bg-[#bae6fd]/30 px-2 py-1">
                 ₹{stats.totalDue.toLocaleString('en-IN')}
               </span>
             </div>
@@ -176,66 +176,66 @@ export default function Billing({ showToast, showLoading }) {
 
         {/* Customer Bills list */}
         {bills.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 px-4 bg-white rounded-2xl shadow-premium border border-slate-100 text-center">
+          <div className="flex flex-col items-center justify-center py-16 px-4 bg-white border-2 border-[#0f172a] text-center mt-4 shadow-[4px_4px_0px_#0f172a]">
             <span className="text-4xl mb-3">🧾</span>
-            <h3 className="text-base font-bold text-slate-800">No Bills Prepared</h3>
-            <p className="text-xs text-slate-500 max-w-[240px] mt-1">
-              Click the green button above to calculate bills for the selected period.
+            <h3 className="text-base font-bold text-[#0f172a] border-b-2 border-[#0f172a]">No Khata Records</h3>
+            <p className="text-xs text-[#0f172a] max-w-[240px] mt-2 font-hand">
+              Click the button above to calculate bills.
             </p>
           </div>
         ) : (
-          <div className="grid gap-3">
+          <div className="grid gap-0">
             {bills.map((bill) => {
               const waLink = getWhatsAppLink(bill);
 
               return (
                 <div
                   key={bill.customer_id}
-                  className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col space-y-3.5 shadow-sm transition hover:shadow-md"
+                  className="ruled-row py-4 flex flex-col space-y-3"
                 >
                   {/* Bill Row Title */}
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-bold text-slate-800 text-sm tracking-tight">{bill.name}</h3>
-                      <p className="text-[10px] text-slate-400 font-semibold uppercase">
+                      <h3 className="font-bold text-[#0f172a] text-sm tracking-tight">{bill.name}</h3>
+                      <p className="text-[10px] text-[#0f172a] font-bold font-hand mt-0.5">
                         {bill.phone || 'No phone number'}
                       </p>
                     </div>
                     
                     {/* Amount & Status Badge */}
                     <div className="text-right flex flex-col items-end">
-                      <p className="text-sm font-extrabold text-slate-800">
+                      <p className="text-base font-extrabold text-[#0f172a] font-hand">
                         ₹{bill.total_amount.toLocaleString('en-IN')}
                       </p>
-                      <span className={`text-[9px] font-extrabold tracking-wider px-2.5 py-0.5 rounded-full uppercase mt-1 border ${
+                      <span className={`text-[9px] font-bold uppercase border px-1 mt-0.5 font-hand ${
                         bill.status === 'Paid'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                          : 'bg-rose-50 text-rose-700 border-rose-100'
+                          ? 'border-[#0f172a] bg-[#bae6fd] text-[#0f172a]'
+                          : 'border-[#ef4444] text-[#ef4444]'
                       }`}>
                         {bill.status}
                       </span>
                     </div>
                   </div>
 
-                  {/* Actions Area (Large Tap Targets) */}
-                  <div className="grid grid-cols-2 gap-3 pt-1 border-t border-slate-50">
+                  {/* Actions Area */}
+                  <div className="flex items-center space-x-3 pt-1">
                     {/* WhatsApp notification CTA */}
                     {waLink ? (
                       <a
                         href={waLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="tap-target flex items-center justify-center space-x-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/50 rounded-xl text-xs font-bold transition active:scale-[0.97]"
+                        className="drawn-btn flex-1 flex items-center justify-center space-x-1.5 bg-white py-2 text-[10px] font-bold font-sans uppercase active:bg-slate-200 transition"
                       >
-                        <MessageCircle size={15} className="fill-emerald-700" />
-                        <span>Send Bill</span>
+                        <MessageCircle size={14} />
+                        <span>WhatsApp</span>
                       </a>
                     ) : (
                       <button
                         disabled
-                        className="tap-target flex items-center justify-center space-x-1.5 bg-slate-50 text-slate-400 border border-slate-100 rounded-xl text-xs font-bold opacity-60 cursor-not-allowed"
+                        className="drawn-btn flex-1 flex items-center justify-center space-x-1.5 bg-slate-100 text-slate-400 py-2 text-[10px] font-bold font-sans uppercase opacity-60 cursor-not-allowed border-slate-300 shadow-none"
                       >
-                        <MessageCircle size={15} />
+                        <MessageCircle size={14} />
                         <span>No Phone</span>
                       </button>
                     )}
@@ -243,19 +243,19 @@ export default function Billing({ showToast, showLoading }) {
                     {/* Mark Paid CTA */}
                     {bill.status === 'Unpaid' ? (
                       <button
-                        onClick={() => handleMarkAsPaid(bill.customer_id)}
-                        className="tap-target flex items-center justify-center space-x-1.5 bg-slate-900 text-white hover:bg-slate-800 rounded-xl text-xs font-bold transition active:scale-[0.97] shadow-sm"
+                         onClick={() => handleMarkAsPaid(bill.customer_id)}
+                         className="drawn-btn flex-1 flex items-center justify-center space-x-1.5 bg-white py-2 text-[10px] font-bold font-sans uppercase active:bg-slate-200 transition"
                       >
-                        <CheckCircle size={15} className="text-emerald-400" />
+                        <CheckCircle size={14} />
                         <span>Mark Paid</span>
                       </button>
                     ) : (
                       <button
                         disabled
-                        className="tap-target flex items-center justify-center space-x-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-xs font-bold cursor-default opacity-80"
+                        className="drawn-btn flex-1 flex items-center justify-center space-x-1.5 bg-[#bae6fd] text-[#0f172a] border-[#0f172a] py-2 text-[10px] font-bold font-sans uppercase cursor-default shadow-none translate-x-[2px] translate-y-[2px]"
                       >
-                        <CheckCircle size={15} className="text-emerald-500" />
-                        <span>All Clear</span>
+                        <CheckCircle size={14} />
+                        <span>Cleared</span>
                       </button>
                     )}
                   </div>
