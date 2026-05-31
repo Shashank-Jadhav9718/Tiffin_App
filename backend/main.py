@@ -179,7 +179,7 @@ def get_customers():
         response = supabase.table('customers') \
             .select('*') \
             .eq('is_active', True) \
-            .order('name', ascending=True) \
+            .order('name', desc=False) \
             .execute()
 
         return response.data or []
