@@ -291,9 +291,9 @@ def calculate_billing(
 
             # Filter meals based on subscription plan
             if 'lunch-only' in plan_type_lower or plan_type_lower == 'lunch':
-                billable_meals = [l for l in cust_logs if l['meal_type'] == 'Lunch']
+                billable_meals = [log for log in cust_logs if log['meal_type'] == 'Lunch']
             elif 'dinner-only' in plan_type_lower or plan_type_lower == 'dinner':
-                billable_meals = [l for l in cust_logs if l['meal_type'] == 'Dinner']
+                billable_meals = [log for log in cust_logs if log['meal_type'] == 'Dinner']
             else:
                 # E.g. 'Both' or other standard plans count all logs
                 billable_meals = cust_logs
