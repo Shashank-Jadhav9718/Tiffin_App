@@ -9,11 +9,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   // Security Auth State
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [pin, setPin] = useState('');
-  const [savedPin, setSavedPin] = useState(() => {
-    return localStorage.getItem('tiffin_app_pin') || '1234';
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   // Settings Modal State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -218,7 +214,7 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Global Settings Modal (Manage PIN, overlay shell) */}
+      {/* Global Settings Modal (Status, overlay shell) */}
       {isSettingsOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 z-50">
           <div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-5 animate-slide-up">
@@ -227,7 +223,7 @@ export default function App() {
             <div className="flex justify-between items-center pb-2 border-b border-slate-100">
               <div className="flex items-center space-x-2">
                 <Shield className="text-emerald-500" size={20} />
-                <h3 className="font-bold text-slate-800 text-sm tracking-tight">Security & Settings</h3>
+                <h3 className="font-bold text-slate-800 text-sm tracking-tight">System Status</h3>
               </div>
               <button
                 onClick={() => setIsSettingsOpen(false)}
@@ -237,43 +233,46 @@ export default function App() {
               </button>
             </div>
 
-            {/* Change PIN Form */}
-            <form onSubmit={handleChangePin} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Current 4-digit PIN</label>
-                <input
-                  type="password"
-                  required
-                  maxLength={4}
-                  pattern="[0-9]{4}"
-                  placeholder="Enter current PIN"
-                  value={oldPinChange}
-                  onChange={(e) => setOldPinChange(e.target.value.replace(/\D/g, ''))}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition tap-target font-mono text-center tracking-widest"
-                />
+            {/* Connection Information Summary */}
+            <div className="space-y-4 text-left">
+              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold font-mono">
+                  ✓
+                </div>
+                <div>
+                  <p className="text-xs font-extrabold text-emerald-800 uppercase tracking-wide">Connected</p>
+                  <p className="text-[10px] text-emerald-600 font-semibold">FastAPI Backend is Active & Online</p>
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">New 4-digit PIN</label>
-                <input
-                  type="password"
-                  required
-                  maxLength={4}
-                  pattern="[0-9]{4}"
-                  placeholder="Enter new PIN"
-                  value={newPinChange}
-                  onChange={(e) => setNewPinChange(e.target.value.replace(/\D/g, ''))}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition tap-target font-mono text-center tracking-widest"
-                />
+              <div className="space-y-2">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">API Gateway Endpoint</label>
+                  <p className="text-xs font-semibold text-slate-700 bg-slate-50 p-2 rounded-lg border border-slate-100 truncate">
+                    http://127.0.0.1:8000
+                  </p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Database Connection</label>
+                  <p className="text-xs font-semibold text-slate-700 bg-slate-50 p-2 rounded-lg border border-slate-100 truncate">
+                    Supabase Transactional Engine
+                  </p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Application Version</label>
+                  <p className="text-xs font-bold text-emerald-600 bg-emerald-50/50 px-2 py-1 rounded-md inline-block">
+                    v1.0.0 (Premium PWA)
+                  </p>
+                </div>
               </div>
 
               <button
-                type="submit"
-                className="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl hover:bg-emerald-600 transition tap-target shadow-md active:scale-[0.98]"
+                onClick={() => setIsSettingsOpen(false)}
+                className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition tap-target shadow-md active:scale-[0.98]"
               >
-                Update PIN Code
+                Done
               </button>
-            </form>
+            </div>
           </div>
         </div>
       )}
