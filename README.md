@@ -67,6 +67,11 @@ CREATE TABLE IF NOT EXISTS monthly_bills (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     CONSTRAINT unique_customer_month_year UNIQUE (customer_id, month, year)
 );
+
+-- IMPORTANT: Disable Row Level Security (RLS) to allow frontend/backend inserts & queries
+ALTER TABLE customers DISABLE ROW LEVEL SECURITY;
+ALTER TABLE daily_logs DISABLE ROW LEVEL SECURITY;
+ALTER TABLE monthly_bills DISABLE ROW LEVEL SECURITY;
 ```
 
 ---
